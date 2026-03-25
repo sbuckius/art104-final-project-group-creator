@@ -128,6 +128,8 @@
   .entry-icon {
     font-size: 3rem;
     margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
   }
 
   .entry-card h2 {
@@ -857,7 +859,45 @@
 <!-- Entry Screen -->
 <div id="entry-screen">
   <div class="entry-card">
-    <div class="entry-icon">🎨</div>
+    <div class="entry-icon">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Monitor body -->
+        <rect x="4" y="8" width="48" height="32" rx="4" fill="url(#screen-grad)" stroke="#c026d3" stroke-width="2"/>
+        <!-- Screen inner -->
+        <rect x="8" y="12" width="40" height="24" rx="2" fill="#0f0a1a"/>
+        <!-- Pixel grid art on screen -->
+        <rect x="11" y="15" width="4" height="4" rx="0.5" fill="#ff2020" opacity="0.9"/>
+        <rect x="17" y="15" width="4" height="4" rx="0.5" fill="#ff8c00" opacity="0.9"/>
+        <rect x="23" y="15" width="4" height="4" rx="0.5" fill="#ffd600" opacity="0.9"/>
+        <rect x="29" y="15" width="4" height="4" rx="0.5" fill="#22c55e" opacity="0.9"/>
+        <rect x="35" y="15" width="4" height="4" rx="0.5" fill="#2563eb" opacity="0.9"/>
+        <rect x="41" y="15" width="4" height="4" rx="0.5" fill="#c026d3" opacity="0.9"/>
+        <rect x="11" y="21" width="4" height="4" rx="0.5" fill="#c026d3" opacity="0.9"/>
+        <rect x="17" y="21" width="4" height="4" rx="0.5" fill="#ff2020" opacity="0.9"/>
+        <rect x="23" y="21" width="4" height="4" rx="0.5" fill="#ff8c00" opacity="0.9"/>
+        <rect x="29" y="21" width="4" height="4" rx="0.5" fill="#ffd600" opacity="0.9"/>
+        <rect x="35" y="21" width="4" height="4" rx="0.5" fill="#22c55e" opacity="0.9"/>
+        <rect x="41" y="21" width="4" height="4" rx="0.5" fill="#2563eb" opacity="0.9"/>
+        <rect x="11" y="27" width="4" height="4" rx="0.5" fill="#2563eb" opacity="0.9"/>
+        <rect x="17" y="27" width="4" height="4" rx="0.5" fill="#c026d3" opacity="0.9"/>
+        <rect x="23" y="27" width="4" height="4" rx="0.5" fill="#ff2020" opacity="0.9"/>
+        <rect x="29" y="27" width="4" height="4" rx="0.5" fill="#ff8c00" opacity="0.9"/>
+        <rect x="35" y="27" width="4" height="4" rx="0.5" fill="#ffd600" opacity="0.9"/>
+        <rect x="41" y="27" width="4" height="4" rx="0.5" fill="#22c55e" opacity="0.9"/>
+        <!-- Cursor arrow on screen -->
+        <polygon points="33,19 33,29 36,26 38,31 40,30 38,25 41,25" fill="white" opacity="0.95"/>
+        <!-- Stand neck -->
+        <rect x="24" y="40" width="8" height="5" rx="1" fill="#7c3fcf"/>
+        <!-- Stand base -->
+        <rect x="18" y="44" width="20" height="3" rx="1.5" fill="#c026d3"/>
+        <defs>
+          <linearGradient id="screen-grad" x1="4" y1="8" x2="52" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#2d0a4e"/>
+            <stop offset="100%" stop-color="#1a0530"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
     <h2>ART 104 Groups</h2>
 
     <div class="directions-box">
@@ -951,13 +991,16 @@ const GROUP_CONFIGS = [
   { id: 'solo-4',  name: 'Solo D',   maxSize: 1 },
   { id: 'solo-5',  name: 'Solo E',   maxSize: 1 },
   { id: 'solo-6',  name: 'Solo F',   maxSize: 1 },
-  // 5 pairs
+  // 8 pairs
   { id: 'pair-1',  name: 'Pair 1',   maxSize: 2 },
   { id: 'pair-2',  name: 'Pair 2',   maxSize: 2 },
   { id: 'pair-3',  name: 'Pair 3',   maxSize: 2 },
   { id: 'pair-4',  name: 'Pair 4',   maxSize: 2 },
   { id: 'pair-5',  name: 'Pair 5',   maxSize: 2 },
-  // 7 trios
+  { id: 'pair-6',  name: 'Pair 6',   maxSize: 2 },
+  { id: 'pair-7',  name: 'Pair 7',   maxSize: 2 },
+  { id: 'pair-8',  name: 'Pair 8',   maxSize: 2 },
+  // 10 trios
   { id: 'trio-1',  name: 'Trio 1',   maxSize: 3 },
   { id: 'trio-2',  name: 'Trio 2',   maxSize: 3 },
   { id: 'trio-3',  name: 'Trio 3',   maxSize: 3 },
@@ -965,6 +1008,9 @@ const GROUP_CONFIGS = [
   { id: 'trio-5',  name: 'Trio 5',   maxSize: 3 },
   { id: 'trio-6',  name: 'Trio 6',   maxSize: 3 },
   { id: 'trio-7',  name: 'Trio 7',   maxSize: 3 },
+  { id: 'trio-8',  name: 'Trio 8',   maxSize: 3 },
+  { id: 'trio-9',  name: 'Trio 9',   maxSize: 3 },
+  { id: 'trio-10', name: 'Trio 10',  maxSize: 3 },
   // 6 quads
   { id: 'quad-1',  name: 'Quad 1',   maxSize: 4 },
   { id: 'quad-2',  name: 'Quad 2',   maxSize: 4 },
@@ -973,7 +1019,7 @@ const GROUP_CONFIGS = [
   { id: 'quad-5',  name: 'Quad 5',   maxSize: 4 },
   { id: 'quad-6',  name: 'Quad 6',   maxSize: 4 },
 ];
-// Total capacity: 6×1 + 5×2 + 7×3 + 6×4 = 6+10+21+24 = 61 spots for 25 students ✓
+// Total capacity: 6×1 + 8×2 + 10×3 + 6×4 = 6+16+30+24 = 76 spots for 25 students ✓
 
 // ── State ───────────────────────────────────────────────────
 let currentUser = null;   // { firstName, lastInitial, displayName, sizePref }
