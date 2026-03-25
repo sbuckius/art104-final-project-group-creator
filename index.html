@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Sign-Up</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     FIREBASE SETUP INSTRUCTIONS
+     ============================================================
+     1. Go to https://console.firebase.google.com/
+     2. Create a new project (or open an existing one)
+     3. Click "Web" (</>)  to add a web app
+     4. Copy your firebaseConfig values into the object below
+     5. In Firebase Console → Realtime Database → Create database
+        → Start in TEST MODE (allows read/write for development)
+     6. Open this HTML file in a browser — done!
+     ============================================================ -->
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<!-- jsPDF for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  :root {
+    --cream: #fff8ff;
+    --ink: #1a0530;
+    --sage: #7c3fcf;
+    --sage-light: #ede0ff;
+    --amber: #ff6b00;
+    --amber-light: #fff0e0;
+    --rose: #e8003d;
+    --rose-light: #ffe0ea;
+    --slate: #5a4070;
+    --border: #e0c8ff;
+    --shadow: 0 2px 12px rgba(124,63,207,0.10);
+    --shadow-hover: 0 6px 24px rgba(124,63,207,0.18);
+    --r: #ff2020;
+    --o: #ff8c00;
+    --y: #ffd600;
+    --g: #22c55e;
+    --b: #2563eb;
+    --i: #7c3fcf;
+    --v: #c026d3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 10% 15%, rgba(255,32,32,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 35% 5%, rgba(255,140,0,0.08) 0%, transparent 35%),
+      radial-gradient(circle at 60% 10%, rgba(255,214,0,0.08) 0%, transparent 35%),
+      radial-gradient(circle at 80% 20%, rgba(34,197,94,0.08) 0%, transparent 38%),
+      radial-gradient(circle at 95% 50%, rgba(37,99,235,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(124,63,207,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 20% 90%, rgba(192,38,211,0.08) 0%, transparent 40%);
+  }
+
+  header {
+    background: linear-gradient(135deg, #ff2020 0%, #ff8c00 18%, #ffd600 34%, #22c55e 50%, #2563eb 66%, #7c3fcf 82%, #c026d3 100%);
+    color: white;
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(124,63,207,0.35);
+  }
+
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: white;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.18);
+  }
+
+  header h1 span {
+    color: #fff9c4;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+  }
+
+  .header-stats strong {
+    color: white;
+    font-size: 1rem;
+    display: block;
+  }
+
+  /* ── Entry screen ── */
+  #entry-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: 40px 20px;
+  }
+
+  .entry-card {
+    background: white;
+    border-radius: 20px;
+    padding: 52px 48px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: var(--shadow-hover);
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+
+  .entry-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+  }
+
+  .entry-card h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .entry-card p {
+    color: var(--slate);
+    margin-bottom: 32px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .name-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  input[type="text"]:focus {
+    border-color: #7c3fcf;
+    box-shadow: 0 0 0 3px rgba(124,63,207,0.12);
+  }
+
+  .last-initial {
+    width: 70px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+  }
+
+  .hint {
+    font-size: 0.78rem;
+    color: var(--slate);
+    text-align: left;
+    margin-bottom: 24px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 15px 24px;
+    background: linear-gradient(90deg, #ff2020, #ff8c00, #ffd600, #22c55e, #2563eb, #c026d3);
+    background-size: 200% auto;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-position 0.4s, transform 0.15s;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-position: right center;
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .error-msg {
+    color: var(--rose);
+    font-size: 0.85rem;
+    margin-top: 10px;
+    min-height: 20px;
+  }
+
+  /* ── Main board ── */
+  #main-screen { display: none; padding: 40px 32px 60px; max-width: 1200px; margin: 0 auto; }
+
+  .welcome-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    padding: 18px 24px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .welcome-bar .greeting {
+    font-size: 0.95rem;
+    color: var(--slate);
+  }
+
+  .welcome-bar .greeting strong {
+    color: var(--ink);
+    font-size: 1.05rem;
+  }
+
+  .btn-leave {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--slate);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-leave:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-light); }
+
+  /* ── Section title ── */
+  .section-label {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Group size tabs ── */
+  .size-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .size-tab {
+    padding: 10px 22px;
+    border-radius: 100px;
+    border: 2px solid var(--border);
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--slate);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .size-tab:hover { border-color: var(--ink); color: var(--ink); }
+
+  .size-tab.active {
+    background: linear-gradient(90deg, #ff2020, #ff8c00, #ffd600, #22c55e, #2563eb, #c026d3);
+    background-size: 200% auto;
+    border-color: transparent;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .size-tab .count-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    border-radius: 100px;
+    padding: 1px 8px;
+    font-size: 0.78rem;
+    margin-left: 4px;
+  }
+
+  .size-tab:not(.active) .count-badge {
+    background: var(--cream);
+    color: var(--slate);
+  }
+
+  /* Rainbow card-header accents by group type */
+  .group-card[data-size="1"] .card-header { border-top: 3px solid #ff2020; }
+  .group-card[data-size="2"] .card-header { border-top: 3px solid #22c55e; }
+  .group-card[data-size="3"] .card-header { border-top: 3px solid #2563eb; }
+  .group-card[data-size="4"] .card-header { border-top: 3px solid #c026d3; }
+
+  /* ── Groups grid ── */
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .group-card {
+    background: white;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .group-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+  .group-card.full { opacity: 0.75; }
+  .group-card.joined {
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 2px #ff8c00, var(--shadow);
+  }
+
+  .card-header {
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-header .group-name {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .capacity-pill {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.03em;
+  }
+
+  .capacity-pill.open { background: #e0f0ff; color: #2563eb; }
+  .capacity-pill.full { background: #e8e8e8; color: #888; }
+  .capacity-pill.joined {
+    background: linear-gradient(90deg, #ff8c00, #ffd600, #22c55e);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  .card-body { padding: 16px 20px; }
+
+  /* Slots */
+  .slots { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+  .slot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .slot.filled {
+    background: #e0f0ff;
+    color: #2563eb;
+  }
+
+  .slot.filled.is-me {
+    background: linear-gradient(90deg, rgba(255,140,0,0.12), rgba(255,214,0,0.12));
+    color: #b06000;
+    border: 1.5px solid #ffd600;
+  }
+
+  .slot.empty {
+    background: var(--cream);
+    color: #bbb;
+    border: 1.5px dashed #ddd;
+  }
+
+  .slot-icon { font-size: 1rem; flex-shrink: 0; }
+  .slot-name { font-weight: 600; }
+  .slot-you { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.65; margin-left: auto; }
+
+  /* Join / Leave buttons */
+  .btn-join {
+    width: 100%;
+    padding: 11px;
+    border-radius: 9px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-join.can-join {
+    background: linear-gradient(90deg, #ff2020, #ff8c00, #ffd600, #22c55e, #2563eb, #c026d3);
+    background-size: 200% auto;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .btn-join.can-join:hover {
+    background-position: right center;
+  }
+
+  .btn-join.is-member {
+    background: var(--rose-light);
+    color: var(--rose);
+    border: 1.5px solid var(--rose);
+  }
+  .btn-join.is-member:hover { background: #fbd5d1; }
+
+  .btn-join.is-full-disabled {
+    background: #f0f0f0;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--cream);
+    padding: 13px 24px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 999;
+    white-space: nowrap;
+  }
+
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── Loading ── */
+  #loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    transition: opacity 0.4s;
+  }
+
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border: 3px solid var(--border);
+    border-top-color: #ff2020;
+    border-right-color: #22c55e;
+    border-bottom-color: #2563eb;
+    border-left-color: #c026d3;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Empty state ── */
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--slate);
+    font-size: 0.95rem;
+  }
+
+  .empty-state .emoji { font-size: 2.5rem; margin-bottom: 12px; }
+
+  /* ── Size preference picker on entry card ── */
+  .directions-box {
+    background: linear-gradient(135deg, rgba(255,32,32,0.06), rgba(37,99,235,0.06), rgba(192,38,211,0.06));
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  .directions-box .dir-title {
+    font-family: 'Fraunces', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .directions-box ol {
+    padding-left: 18px;
+    color: var(--slate);
+    font-size: 0.86rem;
+    line-height: 1.8;
+  }
+  .directions-box ol li strong { color: var(--ink); }
+
+  .size-pref-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: left;
+    margin-bottom: 8px;
+  }
+
+  .size-pref-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .size-pref-btn {
+    padding: 12px 6px 10px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: white;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .size-pref-btn:hover { border-color: var(--ink); transform: translateY(-1px); }
+  .size-pref-btn .spb-num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: block;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .size-pref-btn .spb-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .size-pref-btn[data-size="1"] { border-color: #fca5a5; }
+  .size-pref-btn[data-size="1"] .spb-num { color: #ff2020; }
+  .size-pref-btn[data-size="2"] { border-color: #86efac; }
+  .size-pref-btn[data-size="2"] .spb-num { color: #22c55e; }
+  .size-pref-btn[data-size="3"] { border-color: #93c5fd; }
+  .size-pref-btn[data-size="3"] .spb-num { color: #2563eb; }
+  .size-pref-btn[data-size="4"] { border-color: #e879f9; }
+  .size-pref-btn[data-size="4"] .spb-num { color: #c026d3; }
+
+  .size-pref-btn.selected[data-size="1"] { background: #fff0f0; border-width: 2.5px; border-color: #ff2020; }
+  .size-pref-btn.selected[data-size="2"] { background: #f0fff5; border-width: 2.5px; border-color: #22c55e; }
+  .size-pref-btn.selected[data-size="3"] { background: #eff6ff; border-width: 2.5px; border-color: #2563eb; }
+  .size-pref-btn.selected[data-size="4"] { background: #fdf4ff; border-width: 2.5px; border-color: #c026d3; }
+
+  .size-pref-btn.selected .spb-label { color: var(--ink); }
+
+  .pref-note {
+    font-size: 0.78rem;
+    color: var(--slate);
+    text-align: left;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    padding: 10px 12px;
+    background: var(--amber-light);
+    border-radius: 8px;
+    border-left: 3px solid var(--amber);
+  }
+  .pref-note strong { color: var(--ink); }
+
+  /* welcome bar preference display */
+  .pref-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-left: 10px;
+  }
+
+    header { padding: 18px 20px; }
+    #main-screen { padding: 24px 16px 48px; }
+    .entry-card { padding: 36px 24px; }
+    .name-row { grid-template-columns: 1fr 60px; }
+  }
+
+  /* ── Teacher button in header ── */
+  .btn-teacher {
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.2);
+    border: 1.5px solid rgba(255,255,255,0.5);
+    border-radius: 8px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  .btn-teacher:hover { background: rgba(255,255,255,0.35); }
+
+  /* ── Teacher modal ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,5,48,0.55);
+    backdrop-filter: blur(4px);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 36px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(26,5,48,0.25);
+    transform: translateY(16px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .modal p { color: var(--slate); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.5; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-modal-cancel {
+    flex: 1; padding: 12px; border-radius: 9px; border: 1.5px solid var(--border);
+    background: transparent; color: var(--slate); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-modal-cancel:hover { border-color: var(--rose); color: var(--rose); }
+
+  .btn-modal-confirm {
+    flex: 2; padding: 12px; border-radius: 9px; border: none;
+    background: linear-gradient(90deg, #ff2020, #ff8c00, #ffd600, #22c55e, #2563eb, #c026d3);
+    background-size: 200% auto;
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    transition: background-position 0.4s, transform 0.15s;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .btn-modal-confirm:hover { background-position: right center; transform: translateY(-1px); }
+  .btn-modal-confirm:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .modal-error { color: var(--rose); font-size: 0.82rem; margin-top: 8px; min-height: 18px; }
+
+  /* ── Panel inside teacher modal ── */
+  .teacher-panel { display: none; }
+  .teacher-panel.visible { display: block; }
+
+  .unassigned-list {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+  }
+  .unassigned-list .ua-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.88rem; color: var(--ink); font-weight: 500;
+  }
+  .unassigned-list .ua-item:last-child { border-bottom: none; }
+  .unassigned-list .none-msg { color: var(--slate); font-size: 0.88rem; text-align: center; padding: 8px 0; }
+
+  .panel-stat {
+    display: flex; justify-content: space-between;
+    font-size: 0.85rem; color: var(--slate); margin-bottom: 6px;
+  }
+  .panel-stat strong { color: var(--ink); }
+
+  /* ── Closed / locked state ── */
+  .closed-banner {
+    display: none;
+    background: linear-gradient(90deg, #ff2020, #ff8c00, #ffd600, #22c55e, #2563eb, #c026d3);
+    color: white;
+    text-align: center;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    letter-spacing: 0.02em;
+  }
+  .closed-banner.show { display: block; }
+
+  body.signups-closed .btn-join.can-join {
+    background: #e8e8e8 !important;
+    color: #aaa !important;
+    cursor: not-allowed !important;
+    text-shadow: none !important;
+  }
+  body.signups-closed .btn-leave { display: none; }
+  body.signups-closed .btn-join.is-member { pointer-events: none; opacity: 0.6; }
+
+  .reopen-btn {
+    margin-top: 12px; width: 100%; padding: 11px; border-radius: 9px;
+    border: 1.5px solid var(--rose); background: var(--rose-light);
+    color: var(--rose); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .reopen-btn:hover { background: #fbd5d1; }
+
+  .export-btn {
+    margin-top: 10px; width: 100%; padding: 11px; border-radius: 9px;
+    border: 1.5px solid #2563eb; background: #e0f0ff;
+    color: #2563eb; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    display: none;
+  }
+  .export-btn:hover { background: #bfdbfe; }
+  .export-btn.show { display: block; }
+
+  .assigned-result {
+    background: #f0fff4;
+    border: 1px solid #86efac;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+    color: #166534;
+    line-height: 1.6;
+    display: none;
+  }
+  .assigned-result.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loading-overlay"><div class="spinner"></div></div>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<header>
+  <h1>Group <span>Sign-Up</span></h1>
+  <div class="header-stats">
+    <div><strong id="stat-groups">–</strong>Groups</div>
+    <div><strong id="stat-signed">–</strong>Signed up</div>
+    <div><strong id="stat-open">–</strong>Spots open</div>
+  </div>
+  <button class="btn-teacher" id="btn-open-teacher">🔒 Teacher</button>
+</header>
+
+<!-- Closed banner -->
+<div class="closed-banner" id="closed-banner">🔒 Sign-ups are closed. Groups have been finalized by your teacher.</div>
+
+<!-- Teacher Modal -->
+<div class="modal-overlay" id="teacher-modal">
+  <div class="modal">
+    <!-- Step 1: password -->
+    <div id="teacher-login">
+      <h2>👩‍🏫 Teacher Panel</h2>
+      <p>Enter the teacher password to manage sign-ups and auto-assign students.</p>
+      <input type="password" id="teacher-password" placeholder="Password" style="width:100%;margin-bottom:4px;" autocomplete="off" />
+      <div class="modal-error" id="teacher-pw-error"></div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" id="btn-teacher-cancel">Cancel</button>
+        <button class="btn-modal-confirm" id="btn-teacher-login">Unlock →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: panel -->
+    <div class="teacher-panel" id="teacher-panel">
+      <h2>👩‍🏫 Teacher Panel</h2>
+      <p>Review unassigned students, then close sign-ups and auto-assign them to open spots.</p>
+
+      <div class="panel-stat"><span>Total students registered</span><strong id="tp-total">–</strong></div>
+      <div class="panel-stat"><span>Already in a group</span><strong id="tp-grouped">–</strong></div>
+      <div class="panel-stat" style="margin-bottom:14px;"><span>Need auto-assignment</span><strong id="tp-unassigned" style="color:var(--rose);">–</strong></div>
+
+      <div style="font-size:0.82rem;font-weight:600;color:var(--slate);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Unassigned students</div>
+      <div class="unassigned-list" id="tp-unassigned-list"></div>
+
+      <div class="assigned-result" id="tp-result"></div>
+
+      <button class="btn-modal-confirm" id="btn-close-signups" style="width:100%;padding:14px;">🎲 Close Sign-Ups &amp; Auto-Assign</button>
+      <button class="reopen-btn" id="btn-reopen" style="display:none;">↩ Re-open Sign-Ups</button>
+      <button class="export-btn" id="btn-export-pdf">📄 Export Final Groups as PDF</button>
+
+      <div class="modal-actions" style="margin-top:12px;">
+        <button class="btn-modal-cancel" id="btn-teacher-done">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Entry Screen -->
+<div id="entry-screen">
+  <div class="entry-card">
+    <div class="entry-icon">🎨</div>
+    <h2>ART 104 Groups</h2>
+
+    <div class="directions-box">
+      <div class="dir-title">📋 How it works</div>
+      <ol>
+        <li>Enter your <strong>name</strong> and choose a <strong>preferred group size</strong> (1–4 people).</li>
+        <li>Browse the groups and <strong>click "+ Join"</strong> on any group you like.</li>
+        <li>If you <strong>don't pick a group</strong>, your teacher will auto-assign you based on your size preference below.</li>
+      </ol>
+    </div>
+
+    <div class="name-row">
+      <input type="text" id="input-first" placeholder="First name" maxlength="24" autocomplete="off" />
+      <input type="text" id="input-last" placeholder="A" maxlength="1" class="last-initial" autocomplete="off" />
+    </div>
+    <div class="hint">e.g. &nbsp;<strong>Jordan T.</strong></div>
+
+    <div class="size-pref-label">How many people do you want in your group?</div>
+    <div class="size-pref-grid">
+      <button class="size-pref-btn" data-size="1">
+        <span class="spb-num">1</span>
+        <span class="spb-label">Solo</span>
+      </button>
+      <button class="size-pref-btn" data-size="2">
+        <span class="spb-num">2</span>
+        <span class="spb-label">Pair</span>
+      </button>
+      <button class="size-pref-btn" data-size="3">
+        <span class="spb-num">3</span>
+        <span class="spb-label">Trio</span>
+      </button>
+      <button class="size-pref-btn" data-size="4">
+        <span class="spb-num">4</span>
+        <span class="spb-label">Quad</span>
+      </button>
+    </div>
+
+    <div class="pref-note" id="pref-note" style="display:none;">
+      <strong>Note:</strong> If you pick a group yourself on the next screen, your size preference won't be used. It's only a backup in case you don't choose.
+    </div>
+
+    <button class="btn-primary" id="btn-enter" disabled>Select a group size to continue →</button>
+    <div class="error-msg" id="entry-error"></div>
+  </div>
+</div>
+
+<!-- Main Board -->
+<div id="main-screen">
+  <div class="welcome-bar">
+    <div class="greeting">Signed in as &nbsp;<strong id="display-name"></strong></div>
+    <button class="btn-leave" id="btn-signout">← Change name</button>
+  </div>
+
+  <div class="section-label">Filter by group size</div>
+  <div class="size-tabs" id="size-tabs">
+    <button class="size-tab active" data-size="all">All sizes <span class="count-badge" id="tab-count-all">0</span></button>
+    <button class="size-tab" data-size="1">Solo (1) <span class="count-badge" id="tab-count-1">0</span></button>
+    <button class="size-tab" data-size="2">Pairs (2) <span class="count-badge" id="tab-count-2">0</span></button>
+    <button class="size-tab" data-size="3">Trios (3) <span class="count-badge" id="tab-count-3">0</span></button>
+    <button class="size-tab" data-size="4">Quads (4) <span class="count-badge" id="tab-count-4">0</span></button>
+  </div>
+
+  <div class="section-label">Available groups</div>
+  <div class="groups-grid" id="groups-grid"></div>
+</div>
+
+<script>
+// ============================================================
+//  🔥 PASTE YOUR FIREBASE CONFIG HERE
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyCp0Q7xmEu96jVQSZWdhKIc8ReqaKPRaDU",
+  authDomain: "art104-final-project-groups.firebaseapp.com",
+  databaseURL: "https://art104-final-project-groups-default-rtdb.firebaseio.com",
+  projectId: "art104-final-project-groups",
+  storageBucket: "art104-final-project-groups.firebasestorage.app",
+  messagingSenderId: "373992114467",
+  appId: "1:373992114467:web:269f842f403ba8d2f06496",
+  measurementId: "G-VSNNRL2XY2"
+};
+// ============================================================
+
+// ── App config ──────────────────────────────────────────────
+const MAX_STUDENTS = 25;
+const GROUP_CONFIGS = [
+  // { id, name, maxSize }
+  // 6 solo spots
+  { id: 'solo-1',  name: 'Solo A',   maxSize: 1 },
+  { id: 'solo-2',  name: 'Solo B',   maxSize: 1 },
+  { id: 'solo-3',  name: 'Solo C',   maxSize: 1 },
+  { id: 'solo-4',  name: 'Solo D',   maxSize: 1 },
+  { id: 'solo-5',  name: 'Solo E',   maxSize: 1 },
+  { id: 'solo-6',  name: 'Solo F',   maxSize: 1 },
+  // 5 pairs
+  { id: 'pair-1',  name: 'Pair 1',   maxSize: 2 },
+  { id: 'pair-2',  name: 'Pair 2',   maxSize: 2 },
+  { id: 'pair-3',  name: 'Pair 3',   maxSize: 2 },
+  { id: 'pair-4',  name: 'Pair 4',   maxSize: 2 },
+  { id: 'pair-5',  name: 'Pair 5',   maxSize: 2 },
+  // 7 trios
+  { id: 'trio-1',  name: 'Trio 1',   maxSize: 3 },
+  { id: 'trio-2',  name: 'Trio 2',   maxSize: 3 },
+  { id: 'trio-3',  name: 'Trio 3',   maxSize: 3 },
+  { id: 'trio-4',  name: 'Trio 4',   maxSize: 3 },
+  { id: 'trio-5',  name: 'Trio 5',   maxSize: 3 },
+  { id: 'trio-6',  name: 'Trio 6',   maxSize: 3 },
+  { id: 'trio-7',  name: 'Trio 7',   maxSize: 3 },
+  // 6 quads
+  { id: 'quad-1',  name: 'Quad 1',   maxSize: 4 },
+  { id: 'quad-2',  name: 'Quad 2',   maxSize: 4 },
+  { id: 'quad-3',  name: 'Quad 3',   maxSize: 4 },
+  { id: 'quad-4',  name: 'Quad 4',   maxSize: 4 },
+  { id: 'quad-5',  name: 'Quad 5',   maxSize: 4 },
+  { id: 'quad-6',  name: 'Quad 6',   maxSize: 4 },
+];
+// Total capacity: 6×1 + 5×2 + 7×3 + 6×4 = 6+10+21+24 = 61 spots for 25 students ✓
+
+// ── State ───────────────────────────────────────────────────
+let currentUser = null;   // { firstName, lastInitial, displayName, sizePref }
+let groupsData  = {};     // live snapshot from Firebase
+let activeFilter = 'all';
+let selectedSizePref = null;
+let db;
+
+// ── Size preference picker ────────────────────────────────────
+document.querySelectorAll('.size-pref-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.size-pref-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSizePref = parseInt(btn.dataset.size);
+    document.getElementById('pref-note').style.display = 'block';
+    const enterBtn = document.getElementById('btn-enter');
+    enterBtn.disabled = false;
+    const labels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
+    enterBtn.textContent = `Continue as ${labels[selectedSizePref]} preference →`;
+  });
+});
+
+// ── Firebase init ────────────────────────────────────────────
+function initFirebase() {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    seedGroups().then(() => {
+      listenToGroups();
+      listenToClosedState();
+    });
+  } catch (e) {
+    console.error('Firebase init error:', e);
+    hideLoading();
+    alert('Firebase connection failed. Check your config at the top of this file.');
+  }
+}
+
+// Create group nodes if they don't exist
+async function seedGroups() {
+  const snap = await db.ref('groups').once('value');
+  if (!snap.exists()) {
+    const batch = {};
+    GROUP_CONFIGS.forEach(g => {
+      batch[`groups/${g.id}`] = { name: g.name, maxSize: g.maxSize, members: {} };
+    });
+    await db.ref().update(batch);
+  }
+}
+
+// Real-time listener
+function listenToGroups() {
+  db.ref('groups').on('value', snap => {
+    groupsData = snap.val() || {};
+    renderAll();
+    hideLoading();
+    // Refresh teacher panel live if it's open
+    if (document.getElementById('teacher-panel').classList.contains('visible')) {
+      refreshTeacherPanel();
+    }
+  });
+}
+
+// ── Entry screen ─────────────────────────────────────────────
+document.getElementById('btn-enter').addEventListener('click', handleEnter);
+document.getElementById('input-last').addEventListener('keydown', e => { if (e.key === 'Enter') handleEnter(); });
+document.getElementById('input-first').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('input-last').focus(); });
+document.getElementById('input-last').addEventListener('input', e => {
+  e.target.value = e.target.value.toUpperCase();
+});
+
+function handleEnter() {
+  const first = document.getElementById('input-first').value.trim();
+  const last  = document.getElementById('input-last').value.trim().toUpperCase();
+  const errEl = document.getElementById('entry-error');
+
+  if (!first) { errEl.textContent = 'Please enter your first name.'; return; }
+  if (!last || !/^[A-Z]$/.test(last)) { errEl.textContent = 'Please enter your last initial (one letter).'; return; }
+  if (!selectedSizePref) { errEl.textContent = 'Please select a group size preference.'; return; }
+
+  const displayName = `${first} ${last}.`;
+
+  currentUser = { firstName: first, lastInitial: last, displayName, sizePref: selectedSizePref };
+  errEl.textContent = '';
+  registerStudent(displayName, selectedSizePref);
+  showMain();
+}
+
+document.getElementById('btn-signout').addEventListener('click', () => {
+  currentUser = null;
+  selectedSizePref = null;
+  document.getElementById('input-first').value = '';
+  document.getElementById('input-last').value = '';
+  document.querySelectorAll('.size-pref-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('pref-note').style.display = 'none';
+  const enterBtn = document.getElementById('btn-enter');
+  enterBtn.disabled = true;
+  enterBtn.textContent = 'Select a group size to continue →';
+  document.getElementById('main-screen').style.display = 'none';
+  document.getElementById('entry-screen').style.display = 'flex';
+});
+
+function showMain() {
+  document.getElementById('entry-screen').style.display = 'none';
+  document.getElementById('main-screen').style.display = 'block';
+  const prefColors = { 1:'#ff2020', 2:'#22c55e', 3:'#2563eb', 4:'#c026d3' };
+  const prefLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
+  const pref = currentUser.sizePref;
+  document.getElementById('display-name').innerHTML =
+    `${escapeHTML(currentUser.displayName)}
+     <span class="pref-badge" style="background:${prefColors[pref]}18;color:${prefColors[pref]};border:1.5px solid ${prefColors[pref]}40;">
+       Pref: ${prefLabels[pref]}
+     </span>`;
+  renderAll();
+}
+
+// ── Filtering ────────────────────────────────────────────────
+document.getElementById('size-tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.size-tab');
+  if (!tab) return;
+  document.querySelectorAll('.size-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  activeFilter = tab.dataset.size;
+  renderGroups();
+});
+
+// ── Render ───────────────────────────────────────────────────
+function renderAll() {
+  updateStats();
+  updateTabCounts();
+  renderGroups();
+}
+
+function updateStats() {
+  let totalGroups = GROUP_CONFIGS.length;
+  let signedUp = new Set();
+  let openSpots = 0;
+
+  GROUP_CONFIGS.forEach(cfg => {
+    const g = groupsData[cfg.id];
+    const members = g?.members ? Object.values(g.members) : [];
+    members.forEach(m => signedUp.add(m));
+    openSpots += Math.max(0, cfg.maxSize - members.length);
+  });
+
+  document.getElementById('stat-groups').textContent = totalGroups;
+  document.getElementById('stat-signed').textContent = signedUp.size;
+  document.getElementById('stat-open').textContent = openSpots;
+}
+
+function updateTabCounts() {
+  const counts = { 1: 0, 2: 0, 3: 0, 4: 0, all: 0 };
+  GROUP_CONFIGS.forEach(cfg => {
+    const g = groupsData[cfg.id];
+    const members = g?.members ? Object.values(g.members) : [];
+    const open = cfg.maxSize - members.length;
+    if (open > 0) {
+      counts[cfg.maxSize]++;
+      counts.all++;
+    }
+  });
+  document.getElementById('tab-count-all').textContent = counts.all;
+  document.getElementById('tab-count-1').textContent   = counts[1];
+  document.getElementById('tab-count-2').textContent   = counts[2];
+  document.getElementById('tab-count-3').textContent   = counts[3];
+  document.getElementById('tab-count-4').textContent   = counts[4];
+}
+
+function renderGroups() {
+  const grid = document.getElementById('groups-grid');
+  grid.innerHTML = '';
+
+  const filtered = GROUP_CONFIGS.filter(cfg =>
+    activeFilter === 'all' || String(cfg.maxSize) === activeFilter
+  );
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="emoji">🔍</div>No groups match this filter.</div>';
+    return;
+  }
+
+  filtered.forEach(cfg => {
+    const g = groupsData[cfg.id] || { name: cfg.name, maxSize: cfg.maxSize, members: {} };
+    const members = g.members ? Object.values(g.members) : [];
+    const isMember = currentUser && members.includes(currentUser.displayName);
+    const isFull   = members.length >= cfg.maxSize;
+
+    // Find which group current user is in
+    const myGroupId = currentUser ? findMyGroup() : null;
+
+    const card = document.createElement('div');
+    card.className = `group-card${isFull ? ' full' : ''}${isMember ? ' joined' : ''}`;
+    card.dataset.size = cfg.maxSize;
+
+    // Capacity pill
+    let pillClass = 'open';
+    let pillText  = `${members.length}/${cfg.maxSize} filled`;
+    if (isMember)  { pillClass = 'joined'; pillText = 'You\'re in!'; }
+    else if (isFull) { pillClass = 'full'; pillText = 'Full'; }
+
+    // Size label
+    const sizeLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
+
+    // Slots
+    let slotsHTML = '';
+    for (let i = 0; i < cfg.maxSize; i++) {
+      const memberName = members[i];
+      if (memberName) {
+        const isMe = currentUser && memberName === currentUser.displayName;
+        slotsHTML += `
+          <div class="slot filled${isMe ? ' is-me' : ''}">
+            <span class="slot-icon">${isMe ? '⭐' : '👤'}</span>
+            <span class="slot-name">${escapeHTML(memberName)}</span>
+            ${isMe ? '<span class="slot-you">You</span>' : ''}
+          </div>`;
+      } else {
+        slotsHTML += `<div class="slot empty"><span class="slot-icon">○</span> Open spot</div>`;
+      }
+    }
+
+    // Button
+    let btnClass = '', btnText = '', btnDisabled = false;
+    if (isMember) {
+      btnClass = 'is-member'; btnText = '✕ Leave this group';
+    } else if (isFull) {
+      btnClass = 'is-full-disabled'; btnText = 'Group is full'; btnDisabled = true;
+    } else {
+      btnClass = 'can-join'; btnText = '+ Join this group';
+    }
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="group-name">${sizeLabels[cfg.maxSize]} · ${escapeHTML(g.name)}</div>
+        <span class="capacity-pill ${pillClass}">${pillText}</span>
+      </div>
+      <div class="card-body">
+        <div class="slots">${slotsHTML}</div>
+        <button class="btn-join ${btnClass}" data-group-id="${cfg.id}" data-is-member="${isMember}" ${btnDisabled ? 'disabled' : ''}>
+          ${btnText}
+        </button>
+      </div>`;
+
+    card.querySelector('.btn-join').addEventListener('click', () => {
+      if (!currentUser) return;
+      if (isMember) leaveGroup(cfg.id);
+      else          joinGroup(cfg.id, cfg.maxSize, myGroupId);
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+function findMyGroup() {
+  if (!currentUser) return null;
+  for (const cfg of GROUP_CONFIGS) {
+    const g = groupsData[cfg.id];
+    const members = g?.members ? Object.values(g.members) : [];
+    if (members.includes(currentUser.displayName)) return cfg.id;
+  }
+  return null;
+}
+
+// ── Firebase actions ─────────────────────────────────────────
+async function joinGroup(groupId, maxSize, currentGroupId) {
+  if (!currentUser) return;
+  if (signupsClosed) { showToast('🔒 Sign-ups are closed.'); return; }
+
+  // Check total signed-up students
+  const allMembers = new Set();
+  GROUP_CONFIGS.forEach(cfg => {
+    const g = groupsData[cfg.id];
+    if (g?.members) Object.values(g.members).forEach(m => allMembers.add(m));
+  });
+
+  if (!allMembers.has(currentUser.displayName) && allMembers.size >= MAX_STUDENTS) {
+    showToast('⚠️ Maximum of 25 students reached.');
+    return;
+  }
+
+  const groupRef = db.ref(`groups/${groupId}`);
+
+  try {
+    await db.ref().transaction(rootData => {
+      if (!rootData) return rootData;
+      const group = rootData.groups?.[groupId];
+      if (!group) return rootData;
+
+      const members = group.members ? Object.values(group.members) : [];
+      if (members.length >= maxSize) return; // abort — full
+
+      // Leave old group if in one
+      if (currentGroupId && rootData.groups[currentGroupId]?.members) {
+        const oldMembers = rootData.groups[currentGroupId].members;
+        for (const key in oldMembers) {
+          if (oldMembers[key] === currentUser.displayName) {
+            delete rootData.groups[currentGroupId].members[key];
+          }
+        }
+      }
+
+      // Join new group
+      if (!rootData.groups[groupId].members) rootData.groups[groupId].members = {};
+      const newKey = db.ref().push().key;
+      rootData.groups[groupId].members[newKey] = currentUser.displayName;
+
+      return rootData;
+    });
+    showToast(`✅ Joined ${groupsData[groupId]?.name || 'group'}!`);
+  } catch (e) {
+    console.error(e);
+    showToast('❌ Something went wrong. Try again.');
+  }
+}
+
+async function leaveGroup(groupId) {
+  if (!currentUser) return;
+
+  try {
+    const snap = await db.ref(`groups/${groupId}/members`).once('value');
+    const members = snap.val();
+    if (!members) return;
+
+    const keyToRemove = Object.keys(members).find(k => members[k] === currentUser.displayName);
+    if (keyToRemove) {
+      await db.ref(`groups/${groupId}/members/${keyToRemove}`).remove();
+      showToast('👋 Left the group.');
+    }
+  } catch (e) {
+    console.error(e);
+    showToast('❌ Could not leave. Try again.');
+  }
+}
+
+// ── Helpers ──────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function hideLoading() {
+  const ol = document.getElementById('loading-overlay');
+  ol.style.opacity = '0';
+  setTimeout(() => ol.style.display = 'none', 400);
+}
+
+function escapeHTML(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Teacher panel ─────────────────────────────────────────────
+const TEACHER_PASSWORD = 'teacher123'; // 🔑 Change this password!
+
+let signupsClosed = false;
+
+// Listen to closed state from Firebase
+function listenToClosedState() {
+  db.ref('meta/closed').on('value', snap => {
+    signupsClosed = snap.val() === true;
+    applyClosedState();
+  });
+}
+
+function applyClosedState() {
+  const banner = document.getElementById('closed-banner');
+  if (signupsClosed) {
+    document.body.classList.add('signups-closed');
+    banner.classList.add('show');
+  } else {
+    document.body.classList.remove('signups-closed');
+    banner.classList.remove('show');
+  }
+  renderAll();
+}
+
+// Open modal
+document.getElementById('btn-open-teacher').addEventListener('click', () => {
+  document.getElementById('teacher-login').style.display = 'block';
+  document.getElementById('teacher-panel').classList.remove('visible');
+  document.getElementById('teacher-password').value = '';
+  document.getElementById('teacher-pw-error').textContent = '';
+  document.getElementById('teacher-modal').classList.add('open');
+});
+
+// Close modal
+function closeTeacherModal() {
+  document.getElementById('teacher-modal').classList.remove('open');
+}
+document.getElementById('btn-teacher-cancel').addEventListener('click', closeTeacherModal);
+document.getElementById('btn-teacher-done').addEventListener('click', closeTeacherModal);
+document.getElementById('teacher-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('teacher-modal')) closeTeacherModal();
+});
+
+// Password unlock
+document.getElementById('btn-teacher-login').addEventListener('click', handleTeacherLogin);
+document.getElementById('teacher-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleTeacherLogin();
+});
+
+function handleTeacherLogin() {
+  const pw = document.getElementById('teacher-password').value;
+  if (pw !== TEACHER_PASSWORD) {
+    document.getElementById('teacher-pw-error').textContent = 'Incorrect password. Try again.';
+    return;
+  }
+  document.getElementById('teacher-login').style.display = 'none';
+  document.getElementById('teacher-panel').classList.add('visible');
+  refreshTeacherPanel();
+}
+
+function refreshTeacherPanel() {
+  const grouped = new Set();
+  GROUP_CONFIGS.forEach(cfg => {
+    const g = groupsData[cfg.id];
+    if (g?.members) Object.values(g.members).forEach(m => grouped.add(m));
+  });
+
+  db.ref('students').once('value', snap => {
+    const studentsSnap = snap.val() || {};
+    // Handle both old string format and new {name, sizePref} format
+    const allStudents = Object.values(studentsSnap).map(s => typeof s === 'string' ? { name: s, sizePref: 2 } : s);
+    const unassigned = allStudents.filter(s => !grouped.has(s.name));
+    const prefLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
+    const prefColors = { 1:'#ff2020', 2:'#22c55e', 3:'#2563eb', 4:'#c026d3' };
+
+    document.getElementById('tp-total').textContent = allStudents.length;
+    document.getElementById('tp-grouped').textContent = grouped.size;
+    document.getElementById('tp-unassigned').textContent = unassigned.length;
+
+    const listEl = document.getElementById('tp-unassigned-list');
+    if (unassigned.length === 0) {
+      listEl.innerHTML = '<div class="none-msg">🎉 Everyone is in a group!</div>';
+    } else {
+      listEl.innerHTML = unassigned.map(s => {
+        const color = prefColors[s.sizePref] || '#888';
+        const label = prefLabels[s.sizePref] || '?';
+        return `<div class="ua-item">
+          <span>👤</span>
+          <span style="flex:1">${escapeHTML(s.name)}</span>
+          <span style="font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:100px;background:${color}18;color:${color};border:1px solid ${color}40;">Wants ${label}</span>
+        </div>`;
+      }).join('');
+    }
+
+    const closeBtn = document.getElementById('btn-close-signups');
+    const reopenBtn = document.getElementById('btn-reopen');
+    const exportBtn = document.getElementById('btn-export-pdf');
+    if (signupsClosed) {
+      closeBtn.style.display = 'none';
+      reopenBtn.style.display = 'block';
+      exportBtn.classList.add('show');
+    } else {
+      closeBtn.style.display = 'block';
+      reopenBtn.style.display = 'none';
+      exportBtn.classList.remove('show');
+      closeBtn.disabled = false;
+      closeBtn.textContent = '🎲 Close Sign-Ups & Auto-Assign';
+    }
+  });
+}
+
+// Close sign-ups & auto-assign
+document.getElementById('btn-close-signups').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-close-signups');
+  btn.disabled = true;
+  btn.textContent = 'Assigning…';
+
+  try {
+    const studentsSnap = await db.ref('students').once('value');
+    const studentsObj = studentsSnap.val() || {};
+    // Handle both old string format and new {name, sizePref} object format
+    const allStudents = Object.values(studentsObj).map(s =>
+      typeof s === 'string' ? { name: s, sizePref: 2 } : s
+    );
+
+    // Build current member sets from live Firebase data
+    const snap = await db.ref('groups').once('value');
+    const liveGroups = snap.val() || {};
+    const grouped = new Set();
+    GROUP_CONFIGS.forEach(cfg => {
+      const g = liveGroups[cfg.id];
+      if (g?.members) Object.values(g.members).forEach(m => grouped.add(m));
+    });
+
+    const unassigned = allStudents.filter(s => !grouped.has(s.name));
+
+    if (unassigned.length === 0) {
+      showResult('✅ Everyone already has a group! Sign-ups closed.', true);
+      await db.ref('meta/closed').set(true);
+      refreshTeacherPanel();
+      return;
+    }
+
+    // Build available slots map: { groupId → spotsLeft }
+    const slotsMap = {};
+    GROUP_CONFIGS.forEach(cfg => {
+      const g = liveGroups[cfg.id];
+      const members = g?.members ? Object.values(g.members) : [];
+      const available = cfg.maxSize - members.length;
+      if (available > 0) slotsMap[cfg.id] = available;
+    });
+
+    const updates = {};
+    const assigned = [];
+    const unplaced = [];
+
+    // Shuffle for fairness
+    const shuffled = [...unassigned].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach(student => {
+      // Try to find a group matching their preferred size first
+      const preferred = GROUP_CONFIGS.filter(cfg =>
+        cfg.maxSize === student.sizePref && slotsMap[cfg.id] > 0
+      );
+
+      // Fall back to any group with an open spot
+      const fallback = GROUP_CONFIGS.filter(cfg => slotsMap[cfg.id] > 0);
+
+      const candidates = preferred.length > 0 ? preferred : fallback;
+
+      if (candidates.length === 0) {
+        unplaced.push(student.name);
+        return;
+      }
+
+      // Pick randomly among candidates to spread students out
+      const pick = candidates[Math.floor(Math.random() * candidates.length)];
+      const newKey = db.ref().push().key;
+      updates[`groups/${pick.id}/members/${newKey}`] = student.name;
+      assigned.push({ name: student.name, groupId: pick.id, matched: preferred.length > 0 });
+
+      // Decrement slot
+      slotsMap[pick.id]--;
+      if (slotsMap[pick.id] <= 0) delete slotsMap[pick.id];
+    });
+
+    await db.ref().update(updates);
+    await db.ref('meta/closed').set(true);
+
+    const prefLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
+    const summary = assigned.map(a => {
+      const cfg = GROUP_CONFIGS.find(c => c.id === a.groupId);
+      const matchIcon = a.matched ? '✅' : '↩️';
+      return `${matchIcon} ${escapeHTML(a.name)} → ${escapeHTML(cfg?.name || a.groupId)}${a.matched ? '' : ' <em>(fallback)</em>'}`;
+    }).join('<br>');
+
+    const unplacedNote = unplaced.length > 0
+      ? `<br><br>⚠️ Could not place: ${unplaced.map(escapeHTML).join(', ')} — no open spots remaining.`
+      : '';
+
+    showResult(`✅ Assigned ${assigned.length} student${assigned.length !== 1 ? 's' : ''} (✅ = matched preference, ↩️ = fallback):<br><br>${summary}${unplacedNote}`, true);
+    refreshTeacherPanel();
+
+  } catch (e) {
+    console.error(e);
+    btn.disabled = false;
+    btn.textContent = '🎲 Close Sign-Ups & Auto-Assign';
+    showToast('❌ Error during auto-assign. Check console.');
+  }
+});
+
+// Re-open sign-ups
+document.getElementById('btn-reopen').addEventListener('click', async () => {
+  await db.ref('meta/closed').set(false);
+  document.getElementById('tp-result').classList.remove('show');
+  refreshTeacherPanel();
+  showToast('↩ Sign-ups re-opened!');
+});
+
+function showResult(html, success) {
+  const el = document.getElementById('tp-result');
+  el.innerHTML = html;
+  el.style.background = success ? '#f0fff4' : '#fff8e1';
+  el.style.borderColor = success ? '#86efac' : '#fcd34d';
+  el.style.color = success ? '#166534' : '#92400e';
+  el.classList.add('show');
+}
+
+// ── Register student name in Firebase ─────────────────────────
+async function registerStudent(displayName, sizePref) {
+  const key = displayName.replace(/[^a-zA-Z0-9]/g, '_');
+  await db.ref(`students/${key}`).set({ name: displayName, sizePref: sizePref || 2 });
+}
+
+// ── PDF Export ────────────────────────────────────────────────
+document.getElementById('btn-export-pdf').addEventListener('click', exportPDF);
+
+function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+
+  const pageW = 215.9;
+  const pageH = 279.4;
+  const margin = 18;
+  const colW = (pageW - margin * 2 - 8) / 2;
+  let x = margin;
+  let y = margin;
+  let col = 0;
+
+  // ── Header ──
+  // Rainbow bar at top
+  const rainbow = [
+    [255,32,32], [255,140,0], [255,214,0],
+    [34,197,94], [37,99,235], [124,63,207], [192,38,211]
+  ];
+  const barW = (pageW - margin * 2) / rainbow.length;
+  rainbow.forEach(([r,g,b], i) => {
+    doc.setFillColor(r, g, b);
+    doc.rect(margin + i * barW, y, barW + 0.5, 4, 'F');
+  });
+  y += 7;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(26, 5, 48);
+  doc.text('ART 104 — Final Project Groups', margin, y);
+  y += 6;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(90, 64, 112);
+  const now = new Date();
+  doc.text(`Generated ${now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}  ·  ${now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' })}`, margin, y);
+  y += 2;
+
+  // Divider
+  doc.setDrawColor(224, 200, 255);
+  doc.setLineWidth(0.4);
+  doc.line(margin, y, pageW - margin, y);
+  y += 7;
+
+  const startY = y;
+
+  // Collect non-empty groups
+  const sizeLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
+  const groupColors = {
+    1: [255, 32, 32],
+    2: [34, 197, 94],
+    3: [37, 99, 235],
+    4: [192, 38, 211]
+  };
+
+  const nonEmpty = GROUP_CONFIGS
+    .map(cfg => {
+      const g = groupsData[cfg.id] || {};
+      const members = g.members ? Object.values(g.members) : [];
+      return { cfg, members };
+    })
+    .filter(({ members }) => members.length > 0);
+
+  // Stats summary row
+  const totalStudents = nonEmpty.reduce((s, { members }) => s + members.length, 0);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(90, 64, 112);
+  doc.text(`${nonEmpty.length} groups  ·  ${totalStudents} students assigned`, margin, y);
+  y += 8;
+
+  // Draw each group card in 2-column layout
+  nonEmpty.forEach(({ cfg, members }) => {
+    const cardH = 8 + members.length * 6 + 5;
+
+    // Check if we need a new column or new page
+    if (y + cardH > pageH - margin) {
+      if (col === 0) {
+        col = 1;
+        x = margin + colW + 8;
+        y = startY + 8;
+      } else {
+        doc.addPage();
+        col = 0;
+        x = margin;
+        y = margin + 10;
+        // Re-draw rainbow bar on new page
+        rainbow.forEach(([r,g,b], i) => {
+          doc.setFillColor(r, g, b);
+          doc.rect(margin + i * barW, margin, barW + 0.5, 3, 'F');
+        });
+      }
+    }
+
+    const [cr, cg, cb] = groupColors[cfg.maxSize] || [100,100,100];
+
+    // Card background
+    doc.setFillColor(250, 248, 255);
+    doc.setDrawColor(224, 200, 255);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(x, y, colW, cardH, 2, 2, 'FD');
+
+    // Color accent bar on left
+    doc.setFillColor(cr, cg, cb);
+    doc.roundedRect(x, y, 2.5, cardH, 1, 1, 'F');
+
+    // Group name
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(26, 5, 48);
+    doc.text(`${sizeLabels[cfg.maxSize]} · ${cfg.name}`, x + 6, y + 5.5);
+
+    // Member count pill
+    const pillText = `${members.length}/${cfg.maxSize}`;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7);
+    doc.setTextColor(cr, cg, cb);
+    doc.text(pillText, x + colW - 12, y + 5.5);
+
+    // Divider under header
+    doc.setDrawColor(224, 200, 255);
+    doc.setLineWidth(0.2);
+    doc.line(x + 4, y + 8, x + colW - 4, y + 8);
+
+    // Members
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(40, 20, 70);
+    members.forEach((name, i) => {
+      doc.text(`• ${name}`, x + 6, y + 13 + i * 6);
+    });
+
+    // Empty slots
+    doc.setTextColor(180, 160, 200);
+    doc.setFontSize(7.5);
+    for (let i = members.length; i < cfg.maxSize; i++) {
+      doc.text('○  open spot', x + 6, y + 13 + i * 6);
+    }
+
+    y += cardH + 5;
+  });
+
+  // Footer on each page
+  const pageCount = doc.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p++) {
+    doc.setPage(p);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(160, 140, 180);
+    doc.text(`ART 104 Final Groups  ·  Page ${p} of ${pageCount}`, margin, pageH - 8);
+    doc.text('Confidential — for instructor use', pageW - margin, pageH - 8, { align: 'right' });
+  }
+
+  doc.save('ART104_Final_Groups.pdf');
+  showToast('📄 PDF downloaded!');
+}
+
+// ── Boot ─────────────────────────────────────────────────────
+initFirebase();
+</script>
+</body>
+</html>
