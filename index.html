@@ -1253,35 +1253,33 @@ async function joinGroup(groupId, maxSize, currentGroupId) {
     return;
   }
 
-  const groupRef = db.ref(`groups/${groupId}`);
-
   try {
-    await db.ref().transaction(rootData => {
-      if (!rootData) return rootData;
-      const group = rootData.groups?.[groupId];
-      if (!group) return rootData;
-
-      const members = group.members ? Object.values(group.members) : [];
-      if (members.length >= maxSize) return; // abort — full
-
-      // Leave old group if in one
-      if (currentGroupId && rootData.groups[currentGroupId]?.members) {
-        const oldMembers = rootData.groups[currentGroupId].members;
-        for (const key in oldMembers) {
-          if (oldMembers[key] === currentUser.displayName) {
-            delete rootData.groups[currentGroupId].members[key];
-          }
+    // Step 1: Leave old group if in one (simple remove, no transaction needed)
+    if (currentGroupId) {
+      const oldSnap = await db.ref(`groups/${currentGroupId}/members`).once('value');
+      const oldMembers = oldSnap.val();
+      if (oldMembers) {
+        const keyToRemove = Object.keys(oldMembers).find(k => oldMembers[k] === currentUser.displayName);
+        if (keyToRemove) {
+          await db.ref(`groups/${currentGroupId}/members/${keyToRemove}`).remove();
         }
       }
+    }
 
-      // Join new group
-      if (!rootData.groups[groupId].members) rootData.groups[groupId].members = {};
+    // Step 2: Transaction scoped to just the target group's members node
+    const membersRef = db.ref(`groups/${groupId}/members`);
+    const result = await membersRef.transaction(currentMembers => {
+      const members = currentMembers ? Object.values(currentMembers) : [];
+      if (members.length >= maxSize) return; // abort — full
       const newKey = db.ref().push().key;
-      rootData.groups[groupId].members[newKey] = currentUser.displayName;
-
-      return rootData;
+      return { ...(currentMembers || {}), [newKey]: currentUser.displayName };
     });
-    showToast(`✅ Joined ${groupsData[groupId]?.name || 'group'}!`);
+
+    if (result.committed) {
+      showToast(`✅ Joined ${groupsData[groupId]?.name || 'group'}!`);
+    } else {
+      showToast('⚠️ That group just filled up. Try another!');
+    }
   } catch (e) {
     console.error(e);
     showToast('❌ Something went wrong. Try again.');
