@@ -6,18 +6,6 @@
 <title>Group Sign-Up</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-<!-- ============================================================
-     FIREBASE SETUP INSTRUCTIONS
-     ============================================================
-     1. Go to https://console.firebase.google.com/
-     2. Create a new project (or open an existing one)
-     3. Click "Web" (</>)  to add a web app
-     4. Copy your firebaseConfig values into the object below
-     5. In Firebase Console → Realtime Database → Create database
-        → Start in TEST MODE (allows read/write for development)
-     6. Open this HTML file in a browser — done!
-     ============================================================ -->
-
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -87,9 +75,7 @@
     text-shadow: 0 1px 6px rgba(0,0,0,0.18);
   }
 
-  header h1 span {
-    color: #fff9c4;
-  }
+  header h1 span { color: #fff9c4; }
 
   .header-stats {
     display: flex;
@@ -237,15 +223,8 @@
     box-shadow: var(--shadow);
   }
 
-  .welcome-bar .greeting {
-    font-size: 0.95rem;
-    color: var(--slate);
-  }
-
-  .welcome-bar .greeting strong {
-    color: var(--ink);
-    font-size: 1.05rem;
-  }
+  .welcome-bar .greeting { font-size: 0.95rem; color: var(--slate); }
+  .welcome-bar .greeting strong { color: var(--ink); font-size: 1.05rem; }
 
   .btn-leave {
     padding: 8px 18px;
@@ -261,7 +240,6 @@
 
   .btn-leave:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-light); }
 
-  /* ── Section title ── */
   .section-label {
     font-family: 'Fraunces', serif;
     font-size: 1.1rem;
@@ -280,7 +258,6 @@
     background: var(--border);
   }
 
-  /* ── Group size tabs ── */
   .size-tabs {
     display: flex;
     gap: 10px;
@@ -320,18 +297,13 @@
     margin-left: 4px;
   }
 
-  .size-tab:not(.active) .count-badge {
-    background: var(--cream);
-    color: var(--slate);
-  }
+  .size-tab:not(.active) .count-badge { background: var(--cream); color: var(--slate); }
 
-  /* Rainbow card-header accents by group type */
   .group-card[data-size="1"] .card-header { border-top: 3px solid #ff2020; }
   .group-card[data-size="2"] .card-header { border-top: 3px solid #22c55e; }
   .group-card[data-size="3"] .card-header { border-top: 3px solid #2563eb; }
   .group-card[data-size="4"] .card-header { border-top: 3px solid #c026d3; }
 
-  /* ── Groups grid ── */
   .groups-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -348,7 +320,6 @@
   }
 
   .group-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-
   .group-card.full { opacity: 0.75; }
   .group-card.joined {
     border: 2px solid transparent;
@@ -390,7 +361,6 @@
 
   .card-body { padding: 16px 20px; }
 
-  /* Slots */
   .slots { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 
   .slot {
@@ -403,10 +373,7 @@
     font-weight: 500;
   }
 
-  .slot.filled {
-    background: #e0f0ff;
-    color: #2563eb;
-  }
+  .slot.filled { background: #e0f0ff; color: #2563eb; }
 
   .slot.filled.is-me {
     background: linear-gradient(90deg, rgba(255,140,0,0.12), rgba(255,214,0,0.12));
@@ -424,7 +391,6 @@
   .slot-name { font-weight: 600; }
   .slot-you { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.65; margin-left: auto; }
 
-  /* Join / Leave buttons */
   .btn-join {
     width: 100%;
     padding: 11px;
@@ -443,9 +409,7 @@
     color: white;
     text-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
-  .btn-join.can-join:hover {
-    background-position: right center;
-  }
+  .btn-join.can-join:hover { background-position: right center; }
 
   .btn-join.is-member {
     background: var(--rose-light);
@@ -479,10 +443,7 @@
     white-space: nowrap;
   }
 
-  #toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ── Loading ── */
   #loading-overlay {
@@ -510,7 +471,6 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Empty state ── */
   .empty-state {
     grid-column: 1/-1;
     text-align: center;
@@ -521,7 +481,6 @@
 
   .empty-state .emoji { font-size: 2.5rem; margin-bottom: 12px; }
 
-  /* ── Size preference picker on entry card ── */
   .directions-box {
     background: linear-gradient(135deg, rgba(255,32,32,0.06), rgba(37,99,235,0.06), rgba(192,38,211,0.06));
     border: 1.5px solid var(--border);
@@ -604,7 +563,6 @@
   .size-pref-btn.selected[data-size="2"] { background: #f0fff5; border-width: 2.5px; border-color: #22c55e; }
   .size-pref-btn.selected[data-size="3"] { background: #eff6ff; border-width: 2.5px; border-color: #2563eb; }
   .size-pref-btn.selected[data-size="4"] { background: #fdf4ff; border-width: 2.5px; border-color: #c026d3; }
-
   .size-pref-btn.selected .spb-label { color: var(--ink); }
 
   .pref-note {
@@ -620,7 +578,6 @@
   }
   .pref-note strong { color: var(--ink); }
 
-  /* welcome bar preference display */
   .pref-badge {
     display: inline-flex;
     align-items: center;
@@ -630,12 +587,6 @@
     padding: 3px 10px;
     border-radius: 100px;
     margin-left: 10px;
-  }
-
-    header { padding: 18px 20px; }
-    #main-screen { padding: 24px 16px 48px; }
-    .entry-card { padding: 36px 24px; }
-    .name-row { grid-template-columns: 1fr 60px; }
   }
 
   /* ── Teacher button in header ── */
@@ -713,7 +664,6 @@
 
   .modal-error { color: var(--rose); font-size: 0.82rem; margin-top: 8px; min-height: 18px; }
 
-  /* ── Panel inside teacher modal ── */
   .teacher-panel { display: none; }
   .teacher-panel.visible { display: block; }
 
@@ -781,6 +731,48 @@
   .export-btn:hover { background: #bfdbfe; }
   .export-btn.show { display: block; }
 
+  /* ── Reset button ── */
+  .reset-btn {
+    margin-top: 10px; width: 100%; padding: 11px; border-radius: 9px;
+    border: 1.5px solid #f97316; background: #fff7ed;
+    color: #c2410c; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .reset-btn:hover { background: #ffedd5; }
+  .reset-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── Reset confirm sub-panel ── */
+  .reset-confirm-box {
+    display: none;
+    margin-top: 10px;
+    background: #fff7ed;
+    border: 1.5px solid #f97316;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .reset-confirm-box.show { display: block; }
+  .reset-confirm-box p {
+    font-size: 0.85rem;
+    color: #c2410c;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .reset-confirm-box p strong { color: #9a3412; }
+  .reset-confirm-btns { display: flex; gap: 8px; }
+  .reset-confirm-btns button {
+    flex: 1; padding: 9px; border-radius: 8px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-reset-cancel { background: #f3f4f6; color: #374151; }
+  .btn-reset-cancel:hover { background: #e5e7eb; }
+  .btn-reset-go {
+    background: #f97316; color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .btn-reset-go:hover { background: #ea6a0a; }
+  .btn-reset-go:disabled { opacity: 0.5; cursor: not-allowed; }
+
   .assigned-result {
     background: #f0fff4;
     border: 1px solid #86efac;
@@ -793,6 +785,20 @@
     display: none;
   }
   .assigned-result.show { display: block; }
+
+  /* Divider line in teacher panel */
+  .panel-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16px 0 14px;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 18px 20px; }
+    #main-screen { padding: 24px 16px 48px; }
+    .entry-card { padding: 36px 24px; }
+    .name-row { grid-template-columns: 1fr 60px; }
+  }
 </style>
 </head>
 <body>
@@ -849,6 +855,17 @@
       <button class="reopen-btn" id="btn-reopen" style="display:none;">↩ Re-open Sign-Ups</button>
       <button class="export-btn" id="btn-export-pdf">📄 Export Final Groups as PDF</button>
 
+      <!-- ── Reset Groups ── -->
+      <hr class="panel-divider">
+      <button class="reset-btn" id="btn-reset-groups">🗑️ Reset All Groups</button>
+      <div class="reset-confirm-box" id="reset-confirm-box">
+        <p>⚠️ This will <strong>remove every student from every group</strong> and re-open sign-ups. Student names stay registered. This cannot be undone.</p>
+        <div class="reset-confirm-btns">
+          <button class="btn-reset-cancel" id="btn-reset-cancel">Cancel</button>
+          <button class="btn-reset-go" id="btn-reset-go">Yes, reset everything</button>
+        </div>
+      </div>
+
       <div class="modal-actions" style="margin-top:12px;">
         <button class="btn-modal-cancel" id="btn-teacher-done">Done</button>
       </div>
@@ -861,11 +878,8 @@
   <div class="entry-card">
     <div class="entry-icon">
       <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Monitor body -->
         <rect x="4" y="8" width="48" height="32" rx="4" fill="url(#screen-grad)" stroke="#c026d3" stroke-width="2"/>
-        <!-- Screen inner -->
         <rect x="8" y="12" width="40" height="24" rx="2" fill="#0f0a1a"/>
-        <!-- Pixel grid art on screen -->
         <rect x="11" y="15" width="4" height="4" rx="0.5" fill="#ff2020" opacity="0.9"/>
         <rect x="17" y="15" width="4" height="4" rx="0.5" fill="#ff8c00" opacity="0.9"/>
         <rect x="23" y="15" width="4" height="4" rx="0.5" fill="#ffd600" opacity="0.9"/>
@@ -884,11 +898,8 @@
         <rect x="29" y="27" width="4" height="4" rx="0.5" fill="#ff8c00" opacity="0.9"/>
         <rect x="35" y="27" width="4" height="4" rx="0.5" fill="#ffd600" opacity="0.9"/>
         <rect x="41" y="27" width="4" height="4" rx="0.5" fill="#22c55e" opacity="0.9"/>
-        <!-- Cursor arrow on screen -->
         <polygon points="33,19 33,29 36,26 38,31 40,30 38,25 41,25" fill="white" opacity="0.95"/>
-        <!-- Stand neck -->
         <rect x="24" y="40" width="8" height="5" rx="1" fill="#7c3fcf"/>
-        <!-- Stand base -->
         <rect x="18" y="44" width="20" height="3" rx="1.5" fill="#c026d3"/>
         <defs>
           <linearGradient id="screen-grad" x1="4" y1="8" x2="52" y2="40" gradientUnits="userSpaceOnUse">
@@ -917,22 +928,10 @@
 
     <div class="size-pref-label">How many people do you want in your group?</div>
     <div class="size-pref-grid">
-      <button class="size-pref-btn" data-size="1">
-        <span class="spb-num">1</span>
-        <span class="spb-label">Solo</span>
-      </button>
-      <button class="size-pref-btn" data-size="2">
-        <span class="spb-num">2</span>
-        <span class="spb-label">Pair</span>
-      </button>
-      <button class="size-pref-btn" data-size="3">
-        <span class="spb-num">3</span>
-        <span class="spb-label">Trio</span>
-      </button>
-      <button class="size-pref-btn" data-size="4">
-        <span class="spb-num">4</span>
-        <span class="spb-label">Quad</span>
-      </button>
+      <button class="size-pref-btn" data-size="1"><span class="spb-num">1</span><span class="spb-label">Solo</span></button>
+      <button class="size-pref-btn" data-size="2"><span class="spb-num">2</span><span class="spb-label">Pair</span></button>
+      <button class="size-pref-btn" data-size="3"><span class="spb-num">3</span><span class="spb-label">Trio</span></button>
+      <button class="size-pref-btn" data-size="4"><span class="spb-num">4</span><span class="spb-label">Quad</span></button>
     </div>
 
     <div class="pref-note" id="pref-note" style="display:none;">
@@ -980,18 +979,14 @@ const firebaseConfig = {
 };
 // ============================================================
 
-// ── App config ──────────────────────────────────────────────
 const MAX_STUDENTS = 25;
 const GROUP_CONFIGS = [
-  // { id, name, maxSize }
-  // 6 solo spots
   { id: 'solo-1',  name: 'Solo A',   maxSize: 1 },
   { id: 'solo-2',  name: 'Solo B',   maxSize: 1 },
   { id: 'solo-3',  name: 'Solo C',   maxSize: 1 },
   { id: 'solo-4',  name: 'Solo D',   maxSize: 1 },
   { id: 'solo-5',  name: 'Solo E',   maxSize: 1 },
   { id: 'solo-6',  name: 'Solo F',   maxSize: 1 },
-  // 8 pairs
   { id: 'pair-1',  name: 'Pair 1',   maxSize: 2 },
   { id: 'pair-2',  name: 'Pair 2',   maxSize: 2 },
   { id: 'pair-3',  name: 'Pair 3',   maxSize: 2 },
@@ -1000,7 +995,6 @@ const GROUP_CONFIGS = [
   { id: 'pair-6',  name: 'Pair 6',   maxSize: 2 },
   { id: 'pair-7',  name: 'Pair 7',   maxSize: 2 },
   { id: 'pair-8',  name: 'Pair 8',   maxSize: 2 },
-  // 10 trios
   { id: 'trio-1',  name: 'Trio 1',   maxSize: 3 },
   { id: 'trio-2',  name: 'Trio 2',   maxSize: 3 },
   { id: 'trio-3',  name: 'Trio 3',   maxSize: 3 },
@@ -1011,7 +1005,6 @@ const GROUP_CONFIGS = [
   { id: 'trio-8',  name: 'Trio 8',   maxSize: 3 },
   { id: 'trio-9',  name: 'Trio 9',   maxSize: 3 },
   { id: 'trio-10', name: 'Trio 10',  maxSize: 3 },
-  // 6 quads
   { id: 'quad-1',  name: 'Quad 1',   maxSize: 4 },
   { id: 'quad-2',  name: 'Quad 2',   maxSize: 4 },
   { id: 'quad-3',  name: 'Quad 3',   maxSize: 4 },
@@ -1019,11 +1012,9 @@ const GROUP_CONFIGS = [
   { id: 'quad-5',  name: 'Quad 5',   maxSize: 4 },
   { id: 'quad-6',  name: 'Quad 6',   maxSize: 4 },
 ];
-// Total capacity: 6×1 + 8×2 + 10×3 + 6×4 = 6+16+30+24 = 76 spots for 25 students ✓
 
-// ── State ───────────────────────────────────────────────────
-let currentUser = null;   // { firstName, lastInitial, displayName, sizePref }
-let groupsData  = {};     // live snapshot from Firebase
+let currentUser = null;
+let groupsData  = {};
 let activeFilter = 'all';
 let selectedSizePref = null;
 let db;
@@ -1058,7 +1049,6 @@ function initFirebase() {
   }
 }
 
-// Create group nodes if they don't exist
 async function seedGroups() {
   const snap = await db.ref('groups').once('value');
   if (!snap.exists()) {
@@ -1070,13 +1060,11 @@ async function seedGroups() {
   }
 }
 
-// Real-time listener
 function listenToGroups() {
   db.ref('groups').on('value', snap => {
     groupsData = snap.val() || {};
     renderAll();
     hideLoading();
-    // Refresh teacher panel live if it's open
     if (document.getElementById('teacher-panel').classList.contains('visible')) {
       refreshTeacherPanel();
     }
@@ -1087,9 +1075,7 @@ function listenToGroups() {
 document.getElementById('btn-enter').addEventListener('click', handleEnter);
 document.getElementById('input-last').addEventListener('keydown', e => { if (e.key === 'Enter') handleEnter(); });
 document.getElementById('input-first').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('input-last').focus(); });
-document.getElementById('input-last').addEventListener('input', e => {
-  e.target.value = e.target.value.toUpperCase();
-});
+document.getElementById('input-last').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase(); });
 
 function handleEnter() {
   const first = document.getElementById('input-first').value.trim();
@@ -1101,7 +1087,6 @@ function handleEnter() {
   if (!selectedSizePref) { errEl.textContent = 'Please select a group size preference.'; return; }
 
   const displayName = `${first} ${last}.`;
-
   currentUser = { firstName: first, lastInitial: last, displayName, sizePref: selectedSizePref };
   errEl.textContent = '';
   registerStudent(displayName, selectedSizePref);
@@ -1157,14 +1142,12 @@ function updateStats() {
   let totalGroups = GROUP_CONFIGS.length;
   let signedUp = new Set();
   let openSpots = 0;
-
   GROUP_CONFIGS.forEach(cfg => {
     const g = groupsData[cfg.id];
     const members = g?.members ? Object.values(g.members) : [];
     members.forEach(m => signedUp.add(m));
     openSpots += Math.max(0, cfg.maxSize - members.length);
   });
-
   document.getElementById('stat-groups').textContent = totalGroups;
   document.getElementById('stat-signed').textContent = signedUp.size;
   document.getElementById('stat-open').textContent = openSpots;
@@ -1176,10 +1159,7 @@ function updateTabCounts() {
     const g = groupsData[cfg.id];
     const members = g?.members ? Object.values(g.members) : [];
     const open = cfg.maxSize - members.length;
-    if (open > 0) {
-      counts[cfg.maxSize]++;
-      counts.all++;
-    }
+    if (open > 0) { counts[cfg.maxSize]++; counts.all++; }
   });
   document.getElementById('tab-count-all').textContent = counts.all;
   document.getElementById('tab-count-1').textContent   = counts[1];
@@ -1206,24 +1186,19 @@ function renderGroups() {
     const members = g.members ? Object.values(g.members) : [];
     const isMember = currentUser && members.includes(currentUser.displayName);
     const isFull   = members.length >= cfg.maxSize;
-
-    // Find which group current user is in
     const myGroupId = currentUser ? findMyGroup() : null;
 
     const card = document.createElement('div');
     card.className = `group-card${isFull ? ' full' : ''}${isMember ? ' joined' : ''}`;
     card.dataset.size = cfg.maxSize;
 
-    // Capacity pill
     let pillClass = 'open';
     let pillText  = `${members.length}/${cfg.maxSize} filled`;
-    if (isMember)  { pillClass = 'joined'; pillText = 'You\'re in!'; }
-    else if (isFull) { pillClass = 'full'; pillText = 'Full'; }
+    if (isMember)    { pillClass = 'joined'; pillText = 'You\'re in!'; }
+    else if (isFull) { pillClass = 'full';   pillText = 'Full'; }
 
-    // Size label
     const sizeLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
 
-    // Slots
     let slotsHTML = '';
     for (let i = 0; i < cfg.maxSize; i++) {
       const memberName = members[i];
@@ -1240,15 +1215,10 @@ function renderGroups() {
       }
     }
 
-    // Button
     let btnClass = '', btnText = '', btnDisabled = false;
-    if (isMember) {
-      btnClass = 'is-member'; btnText = '✕ Leave this group';
-    } else if (isFull) {
-      btnClass = 'is-full-disabled'; btnText = 'Group is full'; btnDisabled = true;
-    } else {
-      btnClass = 'can-join'; btnText = '+ Join this group';
-    }
+    if (isMember)      { btnClass = 'is-member';       btnText = '✕ Leave this group'; }
+    else if (isFull)   { btnClass = 'is-full-disabled'; btnText = 'Group is full'; btnDisabled = true; }
+    else               { btnClass = 'can-join';         btnText = '+ Join this group'; }
 
     card.innerHTML = `
       <div class="card-header">
@@ -1287,7 +1257,6 @@ async function joinGroup(groupId, maxSize, currentGroupId) {
   if (!currentUser) return;
   if (signupsClosed) { showToast('🔒 Sign-ups are closed.'); return; }
 
-  // Check total signed-up students
   const allMembers = new Set();
   GROUP_CONFIGS.forEach(cfg => {
     const g = groupsData[cfg.id];
@@ -1300,32 +1269,25 @@ async function joinGroup(groupId, maxSize, currentGroupId) {
   }
 
   try {
-    // Step 1: Leave old group if in one (simple remove, no transaction needed)
     if (currentGroupId) {
       const oldSnap = await db.ref(`groups/${currentGroupId}/members`).once('value');
       const oldMembers = oldSnap.val();
       if (oldMembers) {
         const keyToRemove = Object.keys(oldMembers).find(k => oldMembers[k] === currentUser.displayName);
-        if (keyToRemove) {
-          await db.ref(`groups/${currentGroupId}/members/${keyToRemove}`).remove();
-        }
+        if (keyToRemove) await db.ref(`groups/${currentGroupId}/members/${keyToRemove}`).remove();
       }
     }
 
-    // Step 2: Transaction scoped to just the target group's members node
     const membersRef = db.ref(`groups/${groupId}/members`);
     const result = await membersRef.transaction(currentMembers => {
       const members = currentMembers ? Object.values(currentMembers) : [];
-      if (members.length >= maxSize) return; // abort — full
+      if (members.length >= maxSize) return;
       const newKey = db.ref().push().key;
       return { ...(currentMembers || {}), [newKey]: currentUser.displayName };
     });
 
-    if (result.committed) {
-      showToast(`✅ Joined ${groupsData[groupId]?.name || 'group'}!`);
-    } else {
-      showToast('⚠️ That group just filled up. Try another!');
-    }
+    if (result.committed) showToast(`✅ Joined ${groupsData[groupId]?.name || 'group'}!`);
+    else showToast('⚠️ That group just filled up. Try another!');
   } catch (e) {
     console.error(e);
     showToast('❌ Something went wrong. Try again.');
@@ -1334,12 +1296,10 @@ async function joinGroup(groupId, maxSize, currentGroupId) {
 
 async function leaveGroup(groupId) {
   if (!currentUser) return;
-
   try {
     const snap = await db.ref(`groups/${groupId}/members`).once('value');
     const members = snap.val();
     if (!members) return;
-
     const keyToRemove = Object.keys(members).find(k => members[k] === currentUser.displayName);
     if (keyToRemove) {
       await db.ref(`groups/${groupId}/members/${keyToRemove}`).remove();
@@ -1374,7 +1334,6 @@ const TEACHER_PASSWORD = 'teacher123'; // 🔑 Change this password!
 
 let signupsClosed = false;
 
-// Listen to closed state from Firebase
 function listenToClosedState() {
   db.ref('meta/closed').on('value', snap => {
     signupsClosed = snap.val() === true;
@@ -1394,7 +1353,6 @@ function applyClosedState() {
   renderAll();
 }
 
-// Open modal
 document.getElementById('btn-open-teacher').addEventListener('click', () => {
   document.getElementById('teacher-login').style.display = 'block';
   document.getElementById('teacher-panel').classList.remove('visible');
@@ -1403,9 +1361,9 @@ document.getElementById('btn-open-teacher').addEventListener('click', () => {
   document.getElementById('teacher-modal').classList.add('open');
 });
 
-// Close modal
 function closeTeacherModal() {
   document.getElementById('teacher-modal').classList.remove('open');
+  document.getElementById('reset-confirm-box').classList.remove('show');
 }
 document.getElementById('btn-teacher-cancel').addEventListener('click', closeTeacherModal);
 document.getElementById('btn-teacher-done').addEventListener('click', closeTeacherModal);
@@ -1413,7 +1371,6 @@ document.getElementById('teacher-modal').addEventListener('click', e => {
   if (e.target === document.getElementById('teacher-modal')) closeTeacherModal();
 });
 
-// Password unlock
 document.getElementById('btn-teacher-login').addEventListener('click', handleTeacherLogin);
 document.getElementById('teacher-password').addEventListener('keydown', e => {
   if (e.key === 'Enter') handleTeacherLogin();
@@ -1439,7 +1396,6 @@ function refreshTeacherPanel() {
 
   db.ref('students').once('value', snap => {
     const studentsSnap = snap.val() || {};
-    // Handle both old string format and new {name, sizePref} format
     const allStudents = Object.values(studentsSnap).map(s => typeof s === 'string' ? { name: s, sizePref: 2 } : s);
     const unassigned = allStudents.filter(s => !grouped.has(s.name));
     const prefLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
@@ -1464,15 +1420,15 @@ function refreshTeacherPanel() {
       }).join('');
     }
 
-    const closeBtn = document.getElementById('btn-close-signups');
+    const closeBtn  = document.getElementById('btn-close-signups');
     const reopenBtn = document.getElementById('btn-reopen');
     const exportBtn = document.getElementById('btn-export-pdf');
     if (signupsClosed) {
-      closeBtn.style.display = 'none';
+      closeBtn.style.display  = 'none';
       reopenBtn.style.display = 'block';
       exportBtn.classList.add('show');
     } else {
-      closeBtn.style.display = 'block';
+      closeBtn.style.display  = 'block';
       reopenBtn.style.display = 'none';
       exportBtn.classList.remove('show');
       closeBtn.disabled = false;
@@ -1490,12 +1446,10 @@ document.getElementById('btn-close-signups').addEventListener('click', async () 
   try {
     const studentsSnap = await db.ref('students').once('value');
     const studentsObj = studentsSnap.val() || {};
-    // Handle both old string format and new {name, sizePref} object format
     const allStudents = Object.values(studentsObj).map(s =>
       typeof s === 'string' ? { name: s, sizePref: 2 } : s
     );
 
-    // Build current member sets from live Firebase data
     const snap = await db.ref('groups').once('value');
     const liveGroups = snap.val() || {};
     const grouped = new Set();
@@ -1513,7 +1467,6 @@ document.getElementById('btn-close-signups').addEventListener('click', async () 
       return;
     }
 
-    // Build available slots map: { groupId → spotsLeft }
     const slotsMap = {};
     GROUP_CONFIGS.forEach(cfg => {
       const g = liveGroups[cfg.id];
@@ -1525,33 +1478,19 @@ document.getElementById('btn-close-signups').addEventListener('click', async () 
     const updates = {};
     const assigned = [];
     const unplaced = [];
-
-    // Shuffle for fairness
     const shuffled = [...unassigned].sort(() => Math.random() - 0.5);
 
     shuffled.forEach(student => {
-      // Try to find a group matching their preferred size first
-      const preferred = GROUP_CONFIGS.filter(cfg =>
-        cfg.maxSize === student.sizePref && slotsMap[cfg.id] > 0
-      );
-
-      // Fall back to any group with an open spot
-      const fallback = GROUP_CONFIGS.filter(cfg => slotsMap[cfg.id] > 0);
-
+      const preferred = GROUP_CONFIGS.filter(cfg => cfg.maxSize === student.sizePref && slotsMap[cfg.id] > 0);
+      const fallback  = GROUP_CONFIGS.filter(cfg => slotsMap[cfg.id] > 0);
       const candidates = preferred.length > 0 ? preferred : fallback;
 
-      if (candidates.length === 0) {
-        unplaced.push(student.name);
-        return;
-      }
+      if (candidates.length === 0) { unplaced.push(student.name); return; }
 
-      // Pick randomly among candidates to spread students out
       const pick = candidates[Math.floor(Math.random() * candidates.length)];
       const newKey = db.ref().push().key;
       updates[`groups/${pick.id}/members/${newKey}`] = student.name;
       assigned.push({ name: student.name, groupId: pick.id, matched: preferred.length > 0 });
-
-      // Decrement slot
       slotsMap[pick.id]--;
       if (slotsMap[pick.id] <= 0) delete slotsMap[pick.id];
     });
@@ -1559,7 +1498,6 @@ document.getElementById('btn-close-signups').addEventListener('click', async () 
     await db.ref().update(updates);
     await db.ref('meta/closed').set(true);
 
-    const prefLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
     const summary = assigned.map(a => {
       const cfg = GROUP_CONFIGS.find(c => c.id === a.groupId);
       const matchIcon = a.matched ? '✅' : '↩️';
@@ -1592,11 +1530,53 @@ document.getElementById('btn-reopen').addEventListener('click', async () => {
 function showResult(html, success) {
   const el = document.getElementById('tp-result');
   el.innerHTML = html;
-  el.style.background = success ? '#f0fff4' : '#fff8e1';
+  el.style.background  = success ? '#f0fff4' : '#fff8e1';
   el.style.borderColor = success ? '#86efac' : '#fcd34d';
-  el.style.color = success ? '#166534' : '#92400e';
+  el.style.color       = success ? '#166534' : '#92400e';
   el.classList.add('show');
 }
+
+// ── Reset Groups ──────────────────────────────────────────────
+document.getElementById('btn-reset-groups').addEventListener('click', () => {
+  // Toggle the confirmation box
+  const box = document.getElementById('reset-confirm-box');
+  box.classList.toggle('show');
+});
+
+document.getElementById('btn-reset-cancel').addEventListener('click', () => {
+  document.getElementById('reset-confirm-box').classList.remove('show');
+});
+
+document.getElementById('btn-reset-go').addEventListener('click', async () => {
+  const goBtn = document.getElementById('btn-reset-go');
+  goBtn.disabled = true;
+  goBtn.textContent = 'Resetting…';
+
+  try {
+    // Clear all members from every group
+    const updates = {};
+    GROUP_CONFIGS.forEach(cfg => {
+      updates[`groups/${cfg.id}/members`] = null;
+    });
+    await db.ref().update(updates);
+
+    // Re-open sign-ups if they were closed
+    await db.ref('meta/closed').set(false);
+
+    // Hide confirm box and result banner
+    document.getElementById('reset-confirm-box').classList.remove('show');
+    document.getElementById('tp-result').classList.remove('show');
+
+    refreshTeacherPanel();
+    showToast('🗑️ All groups have been reset.');
+  } catch (e) {
+    console.error(e);
+    showToast('❌ Reset failed. Check console.');
+  } finally {
+    goBtn.disabled = false;
+    goBtn.textContent = 'Yes, reset everything';
+  }
+});
 
 // ── Register student name in Firebase ─────────────────────────
 async function registerStudent(displayName, sizePref) {
@@ -1615,15 +1595,10 @@ function exportPDF() {
   const pageH = 279.4;
   const margin = 18;
   const colW = (pageW - margin * 2 - 8) / 2;
-  let x = margin;
-  let y = margin;
-  let col = 0;
+  let x = margin, y = margin, col = 0;
 
-  // ── Header ──
-  // Rainbow bar at top
   const rainbow = [
-    [255,32,32], [255,140,0], [255,214,0],
-    [34,197,94], [37,99,235], [124,63,207], [192,38,211]
+    [255,32,32],[255,140,0],[255,214,0],[34,197,94],[37,99,235],[124,63,207],[192,38,211]
   ];
   const barW = (pageW - margin * 2) / rainbow.length;
   rainbow.forEach(([r,g,b], i) => {
@@ -1645,22 +1620,14 @@ function exportPDF() {
   doc.text(`Generated ${now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}  ·  ${now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' })}`, margin, y);
   y += 2;
 
-  // Divider
   doc.setDrawColor(224, 200, 255);
   doc.setLineWidth(0.4);
   doc.line(margin, y, pageW - margin, y);
   y += 7;
 
   const startY = y;
-
-  // Collect non-empty groups
   const sizeLabels = { 1:'Solo', 2:'Pair', 3:'Trio', 4:'Quad' };
-  const groupColors = {
-    1: [255, 32, 32],
-    2: [34, 197, 94],
-    3: [37, 99, 235],
-    4: [192, 38, 211]
-  };
+  const groupColors = { 1:[255,32,32], 2:[34,197,94], 3:[37,99,235], 4:[192,38,211] };
 
   const nonEmpty = GROUP_CONFIGS
     .map(cfg => {
@@ -1670,7 +1637,6 @@ function exportPDF() {
     })
     .filter(({ members }) => members.length > 0);
 
-  // Stats summary row
   const totalStudents = nonEmpty.reduce((s, { members }) => s + members.length, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
@@ -1678,22 +1644,15 @@ function exportPDF() {
   doc.text(`${nonEmpty.length} groups  ·  ${totalStudents} students assigned`, margin, y);
   y += 8;
 
-  // Draw each group card in 2-column layout
   nonEmpty.forEach(({ cfg, members }) => {
     const cardH = 8 + members.length * 6 + 5;
 
-    // Check if we need a new column or new page
     if (y + cardH > pageH - margin) {
       if (col === 0) {
-        col = 1;
-        x = margin + colW + 8;
-        y = startY + 8;
+        col = 1; x = margin + colW + 8; y = startY + 8;
       } else {
         doc.addPage();
-        col = 0;
-        x = margin;
-        y = margin + 10;
-        // Re-draw rainbow bar on new page
+        col = 0; x = margin; y = margin + 10;
         rainbow.forEach(([r,g,b], i) => {
           doc.setFillColor(r, g, b);
           doc.rect(margin + i * barW, margin, barW + 0.5, 3, 'F');
@@ -1702,54 +1661,35 @@ function exportPDF() {
     }
 
     const [cr, cg, cb] = groupColors[cfg.maxSize] || [100,100,100];
-
-    // Card background
     doc.setFillColor(250, 248, 255);
     doc.setDrawColor(224, 200, 255);
     doc.setLineWidth(0.3);
     doc.roundedRect(x, y, colW, cardH, 2, 2, 'FD');
-
-    // Color accent bar on left
     doc.setFillColor(cr, cg, cb);
     doc.roundedRect(x, y, 2.5, cardH, 1, 1, 'F');
-
-    // Group name
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     doc.setTextColor(26, 5, 48);
     doc.text(`${sizeLabels[cfg.maxSize]} · ${cfg.name}`, x + 6, y + 5.5);
-
-    // Member count pill
-    const pillText = `${members.length}/${cfg.maxSize}`;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7);
     doc.setTextColor(cr, cg, cb);
-    doc.text(pillText, x + colW - 12, y + 5.5);
-
-    // Divider under header
+    doc.text(`${members.length}/${cfg.maxSize}`, x + colW - 12, y + 5.5);
     doc.setDrawColor(224, 200, 255);
     doc.setLineWidth(0.2);
     doc.line(x + 4, y + 8, x + colW - 4, y + 8);
-
-    // Members
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     doc.setTextColor(40, 20, 70);
-    members.forEach((name, i) => {
-      doc.text(`• ${name}`, x + 6, y + 13 + i * 6);
-    });
-
-    // Empty slots
+    members.forEach((name, i) => { doc.text(`• ${name}`, x + 6, y + 13 + i * 6); });
     doc.setTextColor(180, 160, 200);
     doc.setFontSize(7.5);
     for (let i = members.length; i < cfg.maxSize; i++) {
       doc.text('○  open spot', x + 6, y + 13 + i * 6);
     }
-
     y += cardH + 5;
   });
 
-  // Footer on each page
   const pageCount = doc.getNumberOfPages();
   for (let p = 1; p <= pageCount; p++) {
     doc.setPage(p);
