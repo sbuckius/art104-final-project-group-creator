@@ -133,10 +133,11 @@
     line-height: 1.6;
   }
 
+  /* FIX: first name takes ~75% width, initial takes ~20% */
   .name-row {
     display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
+    grid-template-columns: 1fr 52px;
+    gap: 10px;
     margin-bottom: 12px;
   }
 
@@ -159,12 +160,14 @@
   }
 
   .last-initial {
-    width: 70px;
+    /* width is now controlled by grid; just keep text styling */
     text-align: center;
     text-transform: uppercase;
     font-weight: 600;
     font-size: 1.1rem;
     letter-spacing: 0.05em;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .hint {
@@ -797,7 +800,7 @@
     header { padding: 18px 20px; }
     #main-screen { padding: 24px 16px 48px; }
     .entry-card { padding: 36px 24px; }
-    .name-row { grid-template-columns: 1fr 60px; }
+    .name-row { grid-template-columns: 1fr 48px; }
   }
 </style>
 </head>
@@ -859,7 +862,7 @@
       <hr class="panel-divider">
       <button class="reset-btn" id="btn-reset-groups">🗑️ Reset All Groups</button>
       <div class="reset-confirm-box" id="reset-confirm-box">
-        <p>⚠️ This will <strong>remove every student from every group</strong> and re-open sign-ups. Student names stay registered. This cannot be undone.</p>
+        <p>⚠️ This will <strong>remove every student from every group AND clear the student registry</strong>. Sign-ups will re-open completely fresh. This cannot be undone.</p>
         <div class="reset-confirm-btns">
           <button class="btn-reset-cancel" id="btn-reset-cancel">Cancel</button>
           <button class="btn-reset-go" id="btn-reset-go">Yes, reset everything</button>
@@ -1538,7 +1541,6 @@ function showResult(html, success) {
 
 // ── Reset Groups ──────────────────────────────────────────────
 document.getElementById('btn-reset-groups').addEventListener('click', () => {
-  // Toggle the confirmation box
   const box = document.getElementById('reset-confirm-box');
   box.classList.toggle('show');
 });
@@ -1553,22 +1555,22 @@ document.getElementById('btn-reset-go').addEventListener('click', async () => {
   goBtn.textContent = 'Resetting…';
 
   try {
-    // Clear all members from every group
+    // Clear all members from every group AND wipe the students registry
     const updates = {};
     GROUP_CONFIGS.forEach(cfg => {
       updates[`groups/${cfg.id}/members`] = null;
     });
-    await db.ref().update(updates);
+    updates['students'] = null;          // ← FIX: also clear the student list
+    updates['meta/closed'] = false;      // re-open sign-ups
 
-    // Re-open sign-ups if they were closed
-    await db.ref('meta/closed').set(false);
+    await db.ref().update(updates);
 
     // Hide confirm box and result banner
     document.getElementById('reset-confirm-box').classList.remove('show');
     document.getElementById('tp-result').classList.remove('show');
 
     refreshTeacherPanel();
-    showToast('🗑️ All groups have been reset.');
+    showToast('🗑️ All groups and student records have been reset.');
   } catch (e) {
     console.error(e);
     showToast('❌ Reset failed. Check console.');
